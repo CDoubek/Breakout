@@ -13,19 +13,26 @@ var paddle = SKSpriteNode()
 var brick = SKSpriteNode()
 var loseZone = SKSpriteNode()
 
-class GameScene: SKScene {
+class GameScene: SKScene, SKPhysicsContactDelegate {
     
     override func didMove(to view: SKView) {
         //This stuff happens once(when the app opens)
         createBackground()
         makeLoseZone()
+        physicsWorld.contactDelegate = self
+        self.physicsBody = SKPhysicsBody(edgeLoopFrom: frame)
         func resetGame() {
             //This stuff happns before each game starts
             makeBall()
             makePaddle()
             makeBrick()
         }
+        func kickBall() {
+            ball.physicsBody?.isDynamic = true
+            ball.physicsBody?.applyImpulse(CGVector(dx: 3, dy:5))
+        }
         resetGame()
+        kickBall()
     }
     func createBackground() {
         let stars = SKTexture(imageNamed: "Stars")
