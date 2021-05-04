@@ -57,18 +57,15 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         }
     }
     func didBegin(_ contact: SKPhysicsContact) {
-        if contact.bodyA.node?.name == "brick" ||
-            contact.bodyB.node?.name == "brick" {
-            print("You win!")
-            brick.removeFromParent()
-            ball.removeFromParent()
+            if contact.bodyA.node?.name == "brick" ||
+                contact.bodyB.node?.name == "brick" {
+                gameOver(winner: true)
+            }
+            if contact.bodyA.node?.name == "loseZone" ||
+                contact.bodyB.node?.name == "loseZone" {
+                gameOver(winner: false)
+            }
         }
-        if contact.bodyA.node?.name == "loseZone" ||
-            contact.bodyB.node?.name == "loseZone" {
-            print("You lose!")
-            ball.removeFromParent()
-        }
-    }
     override func didMove(to view: SKView) {
         //This stuff happens once(when the app opens)
         createBackground()
@@ -76,13 +73,13 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         makeLabels()
         physicsWorld.contactDelegate = self
         self.physicsBody = SKPhysicsBody(edgeLoopFrom: frame)
-        func resetGame() {
-            //This stuff happns before each game starts
-            makeBall()
-            makePaddle()
-            makeBrick()
-        }
         resetGame()
+    }
+    func resetGame() {
+        //This stuff happns before each game starts
+        makeBall()
+        makePaddle()
+        makeBrick()
     }
     func createBackground() {
         let stars = SKTexture(imageNamed: "Stars")
@@ -168,5 +165,15 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         scoreLabel.position = CGPoint(x: frame.maxX - 50, y: frame.minY + 18)
         addChild(scoreLabel)
     }
-    
+    func gameOver(winner: Bool) {
+        playingGame = false
+        playLabel.alpha = 1
+        resetGame()
+        if winner {
+            playLabel.text = "You win! Tap to play again"
+        }
+        else {
+            playLabel.text = "You lose! Tap to play again"
+        }
+    }
 }
